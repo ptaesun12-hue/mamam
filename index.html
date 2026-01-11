@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>벚꽃의 기억</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Gaegu&display=swap');
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #fff0f5; color: #5d4037;
+            overflow-x: hidden;
+        }
+
+        /* 벚꽃 효과 */
+        .sakura {
+            position: absolute; background-color: #ffc0cb;
+            border-radius: 100% 0 100% 0; opacity: 0.6;
+            animation: fall linear infinite; pointer-events: none; z-index: 999;
+        }
+        @keyframes fall {
+            to { opacity: 0; top: 100%; transform: translateX(100px) rotate(360deg); }
+        }
+
+        /* 헤더 */
+        header {
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(5px);
+            padding: 20px; text-align: center; position: sticky; top: 0; z-index: 100;
+        }
+        h1 { font-family: 'Gaegu', cursive; color: #ff6f91; margin: 0 0 15px 0; }
+        
+        /* 메뉴 버튼 */
+        nav { display: flex; justify-content: center; gap: 15px; }
+        .nav-btn {
+            border: 2px solid #ffb7c5; background: white;
+            padding: 8px 20px; border-radius: 20px; cursor: pointer;
+            font-weight: bold; color: #5d4037; transition: 0.3s;
+        }
+        .nav-btn.active, .nav-btn:hover {
+            background: #ffb7c5; color: white; transform: translateY(-2px);
+        }
+
+        /* 메인 컨텐츠 */
+        main {
+            max-width: 800px; margin: 30px auto; padding: 20px;
+            background: rgba(255,255,255,0.9); border-radius: 20px;
+            min-height: 500px; text-align: center;
+        }
+        
+        /* 섹션 전환 */
+        .content-section { display: none; animation: fadeIn 0.5s; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        img { max-width: 100%; border-radius: 10px; margin-bottom: 15px; }
+        .profile-img { width: 300px; height: 400px; object-fit: cover; border: 5px solid #ffb7c5; }
+        
+        /* 시작 오버레이 (클릭 유도용) */
+        #start-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            color: white; font-size: 2rem; flex-direction: column; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="start-overlay" onclick="startSite()">
+        <p>🌸 화면을 클릭하면 시작됩니다</p>
+        <span style="font-size: 1rem;">(음악이 함께 재생됩니다)</span>
+    </div>
+
+    <audio id="bgm" loop>
+        <source src="bgm.mp3" type="audio/mp3">
+    </audio>
+
+    <div id="sakura-container" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none;"></div>
+
+    <header>
+        <h1>🌸 Cherry Blossom Memory</h1>
+        <nav>
+            <button class="nav-btn active" onclick="changeMenu('character', this)">캐릭터 소개</button>
+            <button class="nav-btn" onclick="changeMenu('prologue', this)">프롤로그</button>
+            <button class="nav-btn" onclick="changeMenu('gallery', this)">이미지</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="character" class="content-section active">
+            <h2>Profile</h2>
+            <img src="img1.jpg" class="profile-img" alt="캐릭터 사진">
+            <div style="text-align: left; display: inline-block; background: #fff0f5; padding: 20px; border-radius: 10px;">
+                <p><strong>이름:</strong> (이름 입력)</p>
+                <p><strong>나이:</strong> 18세</p>
+                <p><strong>특징:</strong> 금발, 호박색 눈동자, 벚꽃을 닮은 미소</p>
+            </div>
+        </section>
+
+        <section id="prologue" class="content-section">
+            <h2>Prologue</h2>
+            <img src="img2.jpg" style="max-height: 400px; object-fit: cover;" alt="스토리 사진">
+            <p style="line-height: 1.8;">
+                4월의 어느 날, 흩날리는 벚꽃 사이로 그녀가 보였다.<br>
+                호박색 눈동자가 나를 향해 빛났을 때,<br>
+                내 세상은 온통 봄으로 물들기 시작했다.
+            </p>
+        </section>
+
+        <section id="gallery" class="content-section">
+            <h2>Gallery</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                <img src="img1.jpg" style="height:250px; width:100%; object-fit:cover;">
+                <img src="img2.jpg" style="height:250px; width:100%; object-fit:cover;">
+                <img src="img3.jpg" style="height:250px; width:100%; object-fit:cover;">
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // 사이트 시작 기능 (오버레이 제거 + 음악 재생)
+        function startSite() {
+            var overlay = document.getElementById('start-overlay');
+            var audio = document.getElementById('bgm');
+            
+            overlay.style.display = 'none'; // 검은 화면 끄기
+            
+            // 음악 재생 시도
+            audio.play().catch(function(error) {
+                console.log("음악 재생 실패: " + error);
+                alert("음악 파일을 찾을 수 없거나 재생할 수 없습니다.\n파일 이름이 bgm.mp3 인지 확인해주세요.");
+            });
+        }
+
+        // 메뉴 변경 기능
+        function changeMenu(menuId, btn) {
+            // 1. 모든 섹션 숨기기
+            var sections = document.querySelectorAll('.content-section');
+            sections.forEach(function(sec) {
+                sec.classList.remove('active');
+            });
+
+            // 2. 선택한 섹션만 보이기
+            var target = document.getElementById(menuId);
+            if (target) {
+                target.classList.add('active');
+            } else {
+                alert("해당 메뉴를 찾을 수 없습니다: " + menuId);
+            }
+
+            // 3. 버튼 스타일 변경
+            var buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(function(b) {
+                b.classList.remove('active');
+            });
+            btn.classList.add('active');
+        }
+
+        // 벚꽃 생성 (단순화)
+        setInterval(function() {
+            var div = document.createElement('div');
+            div.className = 'sakura';
+            div.style.left = Math.random() * 100 + '%';
+            div.style.width = (Math.random() * 10 + 5) + 'px';
+            div.style.height = div.style.width;
+            div.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.getElementById('sakura-container').appendChild(div);
+            setTimeout(function() { div.remove(); }, 5000);
+        }, 300);
+    </script>
+</body>
+</html>
